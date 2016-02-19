@@ -29,7 +29,7 @@ function export_wp( $args = array() ) {
 	global $wpdb, $post;
 
 	$defaults = array( 'content' => 'all', 'author' => false, 'category' => false,
-		'start_date' => false, 'end_date' => false, 'status' => false,
+		'start_date' => false, 'end_date' => false, 'status' => false, 
 	);
 	$args = wp_parse_args( $args, $defaults );
 
@@ -169,6 +169,23 @@ function export_wp( $args = array() ) {
 		// WordPress (single site): the blog URL.
 		else
 			return get_bloginfo_rss( 'url' );
+	}
+        
+        
+        /**
+	 * Display the permalink to the post for use in feeds.
+	 *
+	 * @since 4.5
+	 *
+	 * @return string Site URL.
+	 */
+	function wxr_the_permalink_rss($args) {
+                $wxr_site_url = wxr_site_url();
+                $base_site_url = $args['base_site_url'];
+		$permalink = get_permalink();
+                $permalink = str_replace($wxr_site_url, $base_site_url, $permalink);
+                
+                echo $permalink;
 	}
 
 	/**
@@ -375,13 +392,13 @@ function export_wp( $args = array() ) {
 
 <channel>
 	<title><?php bloginfo_rss( 'name' ); ?></title>
-	<link><?php bloginfo_rss( 'url' ); ?></link>
+	<link><?php echo $args['base_blog_url']; ?></link>
 	<description><?php bloginfo_rss( 'description' ); ?></description>
 	<pubDate><?php echo date( 'D, d M Y H:i:s +0000' ); ?></pubDate>
 	<language><?php bloginfo_rss( 'language' ); ?></language>
 	<wp:wxr_version><?php echo WXR_VERSION; ?></wp:wxr_version>
-	<wp:base_site_url><?php echo wxr_site_url(); ?></wp:base_site_url>
-	<wp:base_blog_url><?php bloginfo_rss( 'url' ); ?></wp:base_blog_url>
+	<wp:base_site_url><?php echo $args['base_site_url']; ?></wp:base_site_url>
+	<wp:base_blog_url><?php echo $args['base_blog_url']; ?></wp:base_blog_url>
 
 <?php wxr_authors_list( $post_ids ); ?>
 
@@ -425,7 +442,7 @@ function export_wp( $args = array() ) {
 			/** This filter is documented in wp-includes/feed.php */
 			echo apply_filters( 'the_title_rss', $post->post_title );
 		?></title>
-		<link><?php the_permalink_rss() ?></link>
+		<link><?php wxr_the_permalink_rss($args) ?></link>
 		<pubDate><?php echo mysql2date( 'D, d M Y H:i:s +0000', get_post_time( 'Y-m-d H:i:s', true ), false ); ?></pubDate>
 		<dc:creator><?php echo wxr_cdata( get_the_author_meta( 'login' ) ); ?></dc:creator>
 		<guid isPermaLink="false"><?php the_guid(); ?></guid>
