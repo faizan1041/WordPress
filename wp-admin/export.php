@@ -101,7 +101,28 @@ if ( isset( $_GET['download'] ) ) {
 	else {
 		$args['content'] = $_GET['content'];
 	}
-
+        
+        if(isset($_GET['base_site_url'])) {
+            $args['base_site_url'] = $_GET['base_site_url'];
+        }
+        else {
+            $args['base_site_url'] = bloginfo_rss( 'url' );
+        }
+        
+        
+        if(isset($_GET['base_blog_url'])) {
+            $args['base_blog_url'] = $_GET['base_blog_url'];
+        }
+        else {
+            $args['base_blog_url'] = bloginfo_rss( 'url' );
+        }
+        
+       
+        
+        
+        
+        
+        
 	/**
 	 * Filter the export args.
 	 *
@@ -276,6 +297,14 @@ function export_date_options( $post_type = 'post' ) {
 		</fieldset>
 	</li>
 </ul>
+
+<p>URL where it's needed to be exported. (Base Site URL): 
+    <input type="text" name="base_site_url" value="<?php echo bloginfo_rss( 'url' ); ?>" /> 
+</p>
+
+<p>URL where it's needed to be exported. (Base Blog URL): 
+    <input type="text" name="base_blog_url" value="<?php echo bloginfo_rss( 'url' ); ?>" /> 
+</p>
 
 </fieldset>
 <?php
